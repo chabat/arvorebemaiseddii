@@ -21,12 +21,10 @@ void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada) {
     char aux[nChar+1];
     ull hash = 0;
     tupla[strlen(tupla)-1] = '\0';
+
     //passa o atributo pro aux
     for (i = 0, tamanho = strlen(tupla); i < tamanho && virgula; i++) { if (tupla[i] == ',') virgula--; }
-    for (j = 0; j < nChar &&
-	   tupla[i] != '\0' &&
-	   tupla[i] != '\n' &&
-	   tupla[i] != ','; i++) {
+    for (j = 0; j < nChar && tupla[i] != '\0' && tupla[i] != '\n' && tupla[i] != ','; i++) {
       if (tupla[i] != '"') aux[j++] = tupla[i];
     }
     aux[j] = '\0';
