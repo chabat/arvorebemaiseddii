@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <algorithm>
 
 #define MAXTUPLA 1123
 
@@ -20,7 +21,7 @@ struct nodo_t {
     quantidadeKeys = quantidadeFilhos = 0;
 }
   
-  ~nodo_t() {
+  ~nodo_t() { //deconstrutor
     free(keys);
     free(filhos);
   } 
@@ -43,4 +44,4 @@ typedef struct nodo_t nodo_t;
 ull hashFunction(char *str);
 void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada);
 FILE* abrirArquivo(char arquivoEntrada[]);
-int compareIndex(const void *_a, const void *_b);
+bool compareIndex(const index_t &_a, const index_t &_b);

@@ -38,7 +38,8 @@ void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada) {
   }
 
   //ordena de acordo com as hashs
-  qsort(&indices, (int)indices.size(), sizeof(index_t), &compareIndex);
+  //  qsort(&indices, (int)indices.size(), sizeof(index_t), &compareIndex);
+  std::sort(indices.begin(), indices.end(), compareIndex);
 }
 
 FILE* abrirArquivo(char arquivoEntrada[]) {
@@ -50,11 +51,8 @@ FILE* abrirArquivo(char arquivoEntrada[]) {
 }
 
 
-int compareIndex(const void *_a, const void *_b) {
-  index_t *a = (index_t*)_a, *b = (index_t*)_b;
-  if (a < b) return -1;
-  if (a > b) return 1;
-  return 0;
+bool compareIndex(const index_t &_a, const index_t &_b) {
+  return _a.hash < _b.hash;
 }
 
 #endif
