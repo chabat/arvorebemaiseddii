@@ -18,30 +18,46 @@ typedef struct index_t{
     index_t(long long int _h, unsigned long int _o) : hash(_h), offset(_o) {}
 }index_t;
 
-typedef struct nodo_t{
-    nodo_t *filhos;
-    unsigned long int *keys;
-    int quantidadeKeys, quantidadeFilhos;
+typedef struct offsets_t{    //lista encadeada dos offsets
+    ll offset;
+    struct offsets_t *prox;
+}offsets_t;
 
-    nodo_t(int ordem){ //construtor
-        filhos = NULL;
-        filhos = (nodo_t*)malloc(sizeof(nodo_t)*ordem);
-        if (!filhos) printf("Erro inicializando nodo_t\n");
+typedef struct nodo_t{
+    nodo_t **filhos, *prox, *pai;
+    offsets_t **offsets;
+    ull *keys;
+    int quantidadeKeys, quantidadeFilhos;
+    bool folha;
+
+    nodo_t(int ordem, bool folha){ //construtor
+        if(!folha){
+            filhos = NULL;
+            filhos = (nodo_t**)malloc(sizeof(nodo_t*)*ordem);
+            if (!filhos) printf("Erro inicializando vetor dos filhos\n");
+        }
+        else{
+            folha = true;
+            offsets = NULL;
+            offsets = (offsets_t**)malloc(sizeof(offsets_t*)*(ordem-1));
+        }
         keys = NULL;
-        keys = (unsigned long int*)malloc(sizeof(unsigned long int)*(ordem-1));
-        if (!keys) printf("Erro inicializando nodo_t. Parte 2\n");
+        keys = (ull*)malloc(sizeof(ull)*(ordem-1));
+        if (!keys) printf("Erro inicializando vetor das chaves\n");
         quantidadeKeys = quantidadeFilhos = 0;
+        prox = pai = NULL;
     }
 
-    ~nodo_t() { //deconstrutor
+    /*~nodo_t() { //deconstrutor
         free(keys);
         free(filhos);
-    }
+    }*/
 }nodo_t;
 
 typedef vector<index_t> vind;
 
 ull hashFunction(char *str);
-void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada);
 FILE* abrirArquivo(char arquivoEntrada[]);
 bool compareIndex(const index_t &_a, const index_t &_b);
+void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada);
+nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem);

@@ -53,4 +53,42 @@ bool compareIndex(const index_t &_a, const index_t &_b) {
   return _a.hash < _b.hash;
 }
 
+nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem){
+    nodo_t *atual, *raiz = NULL, *paiAtual;
+    offsets_t *aux, *novo;
+    int i = 0, first = 1;
+
+    raiz = (nodo_t*) malloc(sizeof(nodo_t)); //Cria a raiz
+    *raiz = nodo_t(ordem, false);
+    paiAtual = raiz;
+
+    while(i < indices.size()){
+        atual = (nodo_t*)malloc(sizeof(nodo_t));
+        *atual = nodo_t(ordem, true);
+
+        for(int j = 0; j < ordem && i < indices.size(); i++, j++){ //preenche
+            if(j && atual->keys[j-1] == indices[i].hash) j--;
+            atual->keys[j] = indices[i].hash;
+
+            novo = (offsets_t *) malloc(sizeof(offsets_t));
+            novo->prox = NULL;
+            if(atual->offsets[j]){
+                aux = atual->offsets[j];
+                while(aux->prox) aux = aux->prox;
+                aux->prox = novo;
+                aux->prox->offset = indices[i].offset;
+            }
+            else atual->offsets[j] = novo;
+        }
+        if(paiAtual->quantidadeFilhos >= ordem){
+            //divide o pai em dois e o muda
+        }
+        if(!first) paiAtual->keys[paiAtual->quantidadeKeys++] = atual->keys[0];
+        paiAtual->filhos[paiAtual->quantidadeFilhos++] = atual;
+        atual->pai = paiAtual;
+        first = 0;
+    }
+    return NULL;
+}
+
 #endif
