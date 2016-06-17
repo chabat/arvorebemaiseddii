@@ -58,30 +58,28 @@ nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem){
     offsets_t *aux, *novo;
     int i = 0, first = 1;
 
-    raiz = (nodo_t*) malloc(sizeof(nodo_t)); //Cria a raiz
-    *raiz = nodo_t(ordem, false);
+    raiz = criaNodo(ordem, true);
     paiAtual = raiz;
 
     while(i < indices.size()){
-        atual = (nodo_t*)malloc(sizeof(nodo_t));
-        *atual = nodo_t(ordem, true);
+        atual = criaNodo(ordem, true);
 
-        for(int j = 0; j < ordem && i < indices.size(); i++, j++){ //preenche
+        for(int j = 0; j < ordem && i < indices.size(); i++, j++){ //preenche o nodo atual
             if(j && atual->keys[j-1] == indices[i].hash) j--;
             atual->keys[j] = indices[i].hash;
 
-            novo = (offsets_t *) malloc(sizeof(offsets_t));
+            novo = (offsets_t *) malloc(sizeof(offsets_t)); //insere offset
             novo->prox = NULL;
+            novo->offset = indices[i].offset;
             if(atual->offsets[j]){
                 aux = atual->offsets[j];
                 while(aux->prox) aux = aux->prox;
                 aux->prox = novo;
-                aux->prox->offset = indices[i].offset;
             }
             else atual->offsets[j] = novo;
         }
         if(paiAtual->quantidadeFilhos >= ordem){
-            //divide o pai em dois e o muda
+            paiAtual = novoPai(paiAtual, ordem);
         }
         if(!first) paiAtual->keys[paiAtual->quantidadeKeys++] = atual->keys[0];
         paiAtual->filhos[paiAtual->quantidadeFilhos++] = atual;
@@ -89,6 +87,45 @@ nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem){
         first = 0;
     }
     return NULL;
+}
+
+nodo_t* novoPai(nodo_t *paiAtual, int ordem){
+    nodo_t *irmao, *novoPai;
+    irmao = criaNodo(ordem, false);
+    for(int i = ordem/2, j = 0; i < ordem; i++, j++){
+        irmao->keys[j] = paiAtual->keys[i];
+        irmao->filhos[j] =  paiAtual->filhos[i];
+    }
+    paiAtual->quantidadeFilhos--;
+    paiAtual->quantidadeKeys--;
+    irmao->quantidadeFilhos++;
+    irmao->quantidadeKeys++;
+
+
+
+
+
+    if(!paiAtual->pai){
+        novoPai = criaNodo(ordem, false);
+    }
+}
+
+nodo_t* criaNodo(int ordem, bool folha){
+        nodo_t* nodo = (nodo_t *)malloc(sizeof(nodo_t*));
+        if(!folha){
+            nodo->filhos = NULL;
+            nodo->filhos = (nodo_t**)malloc(sizeof(nodo_t*)*ordem);
+            if (!nodo->filhos) printf("Erro inicializando vetor dos filhos\n");
+        }
+        else{
+            nodo->offsets = NULL;
+            nodo->offsets = (offsets_t**)malloc(sizeof(offsets_t*)*(ordem-1));
+        }
+        nodo->keys = NULL;
+        nodo->keys = (ull*)malloc(sizeof(ull)*(ordem-1));
+        if (!nodo->keys) printf("Erro inicializando vetor das chaves\n");
+        nodo->quantidadeKeys = nodo->quantidadeFilhos = 0;
+        nodo->prox = nodo->pai = NULL;
 }
 
 #endif

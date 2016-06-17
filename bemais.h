@@ -30,24 +30,6 @@ typedef struct nodo_t{
     int quantidadeKeys, quantidadeFilhos;
     bool folha;
 
-    nodo_t(int ordem, bool folha){ //construtor
-        if(!folha){
-            filhos = NULL;
-            filhos = (nodo_t**)malloc(sizeof(nodo_t*)*ordem);
-            if (!filhos) printf("Erro inicializando vetor dos filhos\n");
-        }
-        else{
-            folha = true;
-            offsets = NULL;
-            offsets = (offsets_t**)malloc(sizeof(offsets_t*)*(ordem-1));
-        }
-        keys = NULL;
-        keys = (ull*)malloc(sizeof(ull)*(ordem-1));
-        if (!keys) printf("Erro inicializando vetor das chaves\n");
-        quantidadeKeys = quantidadeFilhos = 0;
-        prox = pai = NULL;
-    }
-
     /*~nodo_t() { //deconstrutor
         free(keys);
         free(filhos);
@@ -61,3 +43,5 @@ FILE* abrirArquivo(char arquivoEntrada[]);
 bool compareIndex(const index_t &_a, const index_t &_b);
 void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada);
 nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem);
+nodo_t* novoPai(nodo_t *paiAtual, int ordem);
+nodo_t* criaNodo(int ordem, bool folha);
