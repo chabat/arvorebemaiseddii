@@ -61,10 +61,10 @@ nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem){
     raiz = criaNodo(ordem, true);
     paiAtual = raiz;
 
-    while(i < indices.size()){
+    while(i < (int)indices.size()){
         atual = criaNodo(ordem, true);
 
-        for(int j = 0; j < ordem && i < indices.size(); i++, j++){ //preenche o nodo atual
+        for(int j = 0; j < ordem && i < (int)indices.size(); i++, j++){ //preenche o nodo atual
             if(j && atual->keys[j-1] == indices[i].hash) j--;
             atual->keys[j] = indices[i].hash;
 
@@ -78,9 +78,8 @@ nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem){
             }
             else atual->offsets[j] = novo;
         }
-        if(paiAtual->quantidadeFilhos >= ordem){
-            paiAtual = novoPai(paiAtual, ordem);
-        }
+        paiAtual = checaPai(paiAtual, atual->keys[0], ordem);
+
         if(!first) paiAtual->keys[paiAtual->quantidadeKeys++] = atual->keys[0];
         paiAtual->filhos[paiAtual->quantidadeFilhos++] = atual;
         atual->pai = paiAtual;
@@ -89,17 +88,31 @@ nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem){
     return NULL;
 }
 
-nodo_t* novoPai(nodo_t *paiAtual, int ordem){
+nodo_t* checaPai(nodo_t *paiAtual, ull queSobe, int ordem){ //checa se precisa trocar o pai atual
     nodo_t *irmao, *novoPai;
-    irmao = criaNodo(ordem, false);
-    for(int i = ordem/2, j = 0; i < ordem; i++, j++){
-        irmao->keys[j] = paiAtual->keys[i];
-        irmao->filhos[j] =  paiAtual->filhos[i];
+    ull aux;
+    int i, j;
+
+    //checa se o pai atual existe
+    if(!paiAtual){
+        paiAtual = criaNodo(ordem, false);
     }
-    paiAtual->quantidadeFilhos--;
-    paiAtual->quantidadeKeys--;
-    irmao->quantidadeFilhos++;
-    irmao->quantidadeKeys++;
+
+    // if(paiAtual->quantidadeFilhos >= ordem)
+
+        //Divide o pai cheio
+        irmao = criaNodo(ordem, false);
+        aux = paiAtual->keys[ordem/2];
+        for(i = ordem/2 + 1, j = 0; i < paiAtual->quantidadeKeys - 1; i++, j++){
+            irmao->keys[j] = paiAtual->keys[i];
+            irmao->filhos[j] = paiAtual->filhos[i];
+        }
+        irmao->filhos[j] = paiAtual->filhos[i];
+        paiAtual->keys[paiAtual->quantidadeKeys - 1] = queSobe;
+        queSobe = aux;
+        irmao->quantidadeKeys = paiAtual->quantidadeKeys = ordem/2;
+        irmao->quantidadeFilhos = paiAtual->quantidadeFilhos = ordem/2 + 1;
+
 
 
 

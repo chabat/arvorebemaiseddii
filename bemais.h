@@ -43,5 +43,5 @@ FILE* abrirArquivo(char arquivoEntrada[]);
 bool compareIndex(const index_t &_a, const index_t &_b);
 void leituraArquivo(vind &indices, int nChar, int atributo, FILE *entrada);
 nodo_t* bulk_loading(nodo_t* arvore, vind &indices, int ordem);
-nodo_t* novoPai(nodo_t *paiAtual, int ordem);
+nodo_t* checaPai(nodo_t *paiAtual, ull queSobe, int ordem);
 nodo_t* criaNodo(int ordem, bool folha);
